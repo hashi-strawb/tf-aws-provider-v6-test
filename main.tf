@@ -27,15 +27,6 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  alias  = "peer"
-  region = "eu-west-2"
-
-  default_tags {
-    tags = local.tags
-  }
-}
-
 # Hub VPC
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
@@ -43,8 +34,7 @@ resource "aws_vpc" "main" {
 
 # Spoke VPC
 resource "aws_vpc" "peer" {
-  # Need to use the other AWS provider here, to specify the region
-  provider = aws.peer
+  region = "eu-west-2"
 
   cidr_block = "10.1.0.0/16"
 }
@@ -59,8 +49,7 @@ resource "aws_vpc_peering_connection" "main" {
 
 # Accepter's side of the connection.
 resource "aws_vpc_peering_connection_accepter" "peer" {
-  # Need to use the other AWS provider here, to specify the region
-  provider = aws.peer
+  region = "eu-west-2"
 
   vpc_peering_connection_id = aws_vpc_peering_connection.main.id
   auto_accept               = true
